@@ -12,31 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-extern crate alloc;
+#![no_std]
+#![no_main]
 
-use alloc::vec::Vec;
+use risc0_zkvm::guest::env;
 
-use serde::{Deserialize, Serialize};
+risc0_zkvm::entry!(main);
 
-// Benchmark support structures for communication between host and guest.
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub enum BenchmarkSpec {
-    SimpleLoop,
-    HashBytes {
-        buf: Vec<u8>,
-    },
-    HashRawWords {
-        buf: Vec<u32>,
-    },
-    Memcpy {
-        src: Vec<u8>,
-        src_align: usize,
-        dst_align: usize,
-    },
-    Memset {
-        len: usize,
-    },
+pub fn main() {
+    env::commit(b"hello world");
 }
-
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct SpecWithIters(pub BenchmarkSpec, pub u64);
