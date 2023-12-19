@@ -20,7 +20,7 @@ use bytemuck::Pod;
 use risc0_zkvm_platform::{
     fileno,
     syscall::{
-        self, sys_alloc_words, sys_cycle_count, sys_halt, sys_log, sys_pause, sys_read,
+        self, sys_alloc_words, sys_cycle_count, sys_getenv, sys_halt, sys_log, sys_pause, sys_read,
         sys_read_words, sys_verify, sys_verify_integrity, sys_write, syscall_2, SyscallName,
     },
     WORD_SIZE,
@@ -104,6 +104,18 @@ pub fn syscall(syscall: SyscallName, to_host: &[u8], from_host: &mut [u32]) -> s
             from_host.len(),
             to_host.as_ptr() as u32,
             to_host.len() as u32,
+        )
+    }
+}
+
+///
+pub fn env_var(varname: &str, var: &mut [u32]) -> usize {
+    unsafe {
+        sys_getenv(
+            var.as_mut_ptr(),
+            var.len(),
+            varname.as_bytes().as_ptr(),
+            varname.len(),
         )
     }
 }
